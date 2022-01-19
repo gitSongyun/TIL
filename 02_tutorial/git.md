@@ -51,6 +51,3 @@
 ### pull/clone
 
 * `git clone <git url>`
-
-
-
