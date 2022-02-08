@@ -151,11 +151,11 @@ print(is_pal_recursive('azza'))
   
 
   
-  
+
   # 오늘 배운 것 
-  
+
   #### global 함수 사용
-  
+
   ```python
   a=10 ## global 변수 
   def func1():
@@ -167,9 +167,9 @@ print(is_pal_recursive('azza'))
   print(a)  ## 3
   	
   ```
-  
+
   #### global 함수 에러  (다시 보기)
-  
+
   ```python
   ## syntax error
   a = 10
@@ -183,7 +183,7 @@ print(is_pal_recursive('azza'))
   func1()
   print(a)
   ```
-  
+
   ```python
   # 의문점
   a = 10
@@ -199,9 +199,9 @@ print(is_pal_recursive('azza'))
   
   ## syntaxEroor: name 'a' is parameter and global
   ```
-  
+
   #### locals()를 이용해 함수 안의 변수를 dictionary로 묶기
-  
+
   ```python
   a_var = range(2)
   def locals_test():
@@ -212,17 +212,17 @@ print(is_pal_recursive('azza'))
   
   locals_test()
   ```
-  
+
   #### map 활용
-  
+
   ```python
   # input값들을 바로 숫자로 사용하고 싶은 경우
   # 외우기
   n,m = map(int, input().split())
   ```
-  
+
   #### filter(fucntion, iterable)
-  
+
   ```python
   def odd(n):
       return n % 2
@@ -231,18 +231,18 @@ print(is_pal_recursive('azza'))
   print(result, type(result)) ## <filter object at 0x10e4dfc10> <class filter>
   list(result) ## result는 위와 같이 출력되므로 list로 형변환 해야 한다. 
   ```
-  
+
   #### lamda[parameter] : 간결하게 함수 이용하기
-  
+
   ```python
   triangle_area = lambda b,h : 0.5*b*h ## 괄호 없이 arguments를 적은 다음 인자를 어떻게 활용할지 
   triangle_area(5,6)
   ```
+
   
-  
-  
+
   #### sort (숫자 정렬)
-  
+
   ```python
   a = numbers.sort() ## (reverse = True) 내림차순
   
@@ -253,13 +253,13 @@ print(is_pal_recursive('azza'))
   print(lst)
   
   ```
-  
+
   #### dictionary함수에 대해
-  
+
   ```python
   a['key'] = ['value1', 'value2']
   ```
-  
+
   ```python
   a=[ [0,1,2],[3,4,5],[6,7,8]]
   
@@ -270,7 +270,7 @@ print(is_pal_recursive('azza'))
       return result
   print(draw(a))
   ```
-  
+
   ​	
 
 
@@ -299,7 +299,7 @@ b[1] =11 # 결과 [10,11,2,1]
 
 ```
 
-![image-20220125151241470](0122_TIL.assets/image-20220125151241470.png)
+![image-20220125151241470](Python.assets/image-20220125151241470.png)
 
 
 
