@@ -1,5 +1,9 @@
 # 0205 TIL (HTML,CSS)
 
+
+
+# HTML
+
 ## HTML 기본 구조 
 
 - html: 문서의 최상위 요소
@@ -65,6 +69,25 @@ ___
 
 
 
+# CSS
+
+## box sizing
+
+- 기본적으로 모든 요소의 box-sizing은 content-box
+
+- box sizing을 쓰면 부모 컨테이너 안에 있는 자식 박스가 border를 줘도 삐져나오지 않고 정확히 부모박스안에 들어가게 된다. 
+
+```html
+<style>
+	box-sizing: border-box;
+	width: 100%;
+	border: solid 10px;
+	padding: 5px;
+</style>
+```
+
+
+
 # 0207
 
 ## 강의중
@@ -83,15 +106,9 @@ Flex container (부모요소)를 쓸 때는 display: flex를 써야 함.
 
 
 
-# Bootstrap
+# - Bootstrap
 
 스크립트 파일은 일반적으로body 닫는 태그 위에
-
-
-
-### **CDN**
-
-### 
 
 ## spacing
 
