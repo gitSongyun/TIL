@@ -16,7 +16,7 @@ for i in range(1 << 9):
     for j in range(9):
         if i & (1 << j):
             part.append(height[j])
-            print(part)
+            # print(part)
         sum_1 = 0
 
     # 모든 부분집합들의 합
