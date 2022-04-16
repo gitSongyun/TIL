@@ -19,12 +19,12 @@ for tc in range(1, T+1):
         # 만약 알파벳 이라면 그에 대응하는 정수로 변환
         if i in hexa:
             num = hexa[i]
-            x = hexa[i]
+            # x = hexa[i]
 
         # 숫자라면 int로 변환
         else:
             num = int(i)
-            x = int(i)
+            # x = int(i)
 
         # 이진수 변환
         binary = ''
