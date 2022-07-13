@@ -190,6 +190,28 @@ export default App;
 
 - class 대신 className
 
+  :JS와는 다르게 `class="myclass"` 가 아니라 `className`으로 작성해야 한다. 
+
+  ```js
+  import './App.css';
   
+  function App() {
+  	const name = "리액트";
+  	return <div className="react">{name}</div>
+  }
+  export default App;
+  ```
+
+- 꼭 닫아야 하는 태그 
+  : HTML의 경우 `<input>` 은 닫지 않아도 되지만 JSX 에서는 닫아야 한다 .
+   태그 사이에 아무 내용도 들어가지 않는다면 `<input />` 로 작성한다.
+
+   
+
+- 주석
+
+  `{/* */}` 으로 작성해야 한다.
+
+
 
 [변수와 타입](react/00_변수와타입.md)
