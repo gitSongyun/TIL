@@ -1,5 +1,13 @@
 # React
 
+- 프로젝트 생성
+
+  `yarn create react-app [프로젝트 이름]`
+
+- 서버 실행
+
+  `yarn start`
+
 - JSX 코드
 
 ```js
@@ -30,7 +38,7 @@ function App() {
 export default App;
 ```
 
-## JSX
+## 2. JSX
 
 : jSX는 자바스크립트의 확장 문법
 
@@ -215,3 +223,24 @@ export default App;
 
 
 [변수와 타입](react/00_변수와타입.md)
+
+
+
+## 3. 컴포넌트
+
+### 3.1. 클래스형 컴포넌트
+
+- 함수 컴포넌트
+
+  ``` js
+  import './App.css';
+  
+  fucntion App() {
+      const name = '리액트';
+      return <div className="react">{name}</div>
+  }
+  export default App;
+  ```
+
+  
+
