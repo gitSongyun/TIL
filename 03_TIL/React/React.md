@@ -270,3 +270,110 @@ export default App;
 
 
 
+// 싸트북으로 작성
+
+### 3.3 props
+
+- jsx 내부에서 props 랜더링
+
+  ```react
+  // App (부모 컴포넌트)
+  import MyComponent from './MyComponent'
+  
+  const App = () => {
+    return <MyComponent/>;
+  };
+  
+  export default App;
+  
+  // Mycomponent
+  const MyComponent = props => {
+      return <div>안녕하세요, 제 이름은 {props.name} 입니다.</div>
+  };
+  
+  MyComponent.defaultProps = {
+      name : '기본 이름'
+  };
+  
+  export default MyComponent;
+  ```
+
+  
+
+- 태그 사이의 내용을 보여 주는 children
+
+  ```react
+  // App
+  import MyComponent from './MyComponent'
+  
+  const App = () => {
+    return <MyComponent>리액트</MyComponent>;
+  };
+  
+  export default App;
+  
+  // Mycomponent
+  const MyComponent = props => {
+      return ( <div>
+          안녕하세요, 제 이름은 {props.name} 입니다.<br/>
+          children 값은 {props.children}.
+          </div>
+  )};
+  
+  MyComponent.defaultProps = {
+      name : '기본 이름'
+  };
+  
+  export default MyComponent;
+  ```
+
+  `props.children` 을 사용하면 App 컴포넌트의 내용을 MyComponent에서 보여 줄 수 있다.
+
+
+
+- 비구조화 할당 문법을 통해 props 내부 값 추출
+  비구조화 할당 문법: 객체에서 값을 추출하는 문법, 함수의 파라미터 부분에서도 사용할 수 잇다.
+
+  ```react
+  const MyComponent = props => {
+      const {name, children} = props;
+  
+      return ( 
+      <div>
+          안녕하세요, 제 이름은 {name} 입니다.<br/>
+          children 값은 {children}
+          입니다.
+      </div>
+      );
+  };
+  
+  MyComponent.defaultProps = {
+      name : '기본 이름'
+  };
+  
+  export default MyComponent;
+  
+  
+  // 더 간단한 방법
+  const MyComponent = ({name, children}) => {
+  ...
+  ```
+
+  name 과 children을 할당해서 값을 추출한다.
+
+​	
+
+- propTypes를 통한 props 검증
+  name 값은 무조건 string 형태로 전달하게 한다.
+
+  ```react
+  MyComponent.defaultProps = {
+      name : '기본 이름'
+  };
+  
+  MyComponent.propTypes = {
+      name: PropTypes.string
+  };
+  ```
+
+  
