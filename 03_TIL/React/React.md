@@ -384,3 +384,116 @@ export default App;
    props는 컴포넌트가 사용되는 과정에서 부모 컴포넌트가 설정하는 값이며, 읽기 전용으     	로만 사용할 수 있다.
 
 - 클래스형 컴포넌트의  state
+
+```react
+import { Component } from 'react';
+
+
+class Counter extends Coponent {
+    // state를 설정하기 위한 constructor 메서드를 작성
+    constructor(props) {
+        super(props); // 클래스형 컴포넌트에서 constructor를 작성할 때는 반드시 spuer 호출해야 함
+        // state의 초깃값 설정하기
+        this.state = { 	// 컴포넌트의 state는 객체 형식
+            number = 0
+        };
+    }
+    render() {
+        const { number } = this.state; // state를 조회할 때는 this.state로 조회합니다.
+        return (
+        	<div>
+            	<h1>{number}</h1>
+            	<button
+                    // onClick을 통해 버튼이 클릭되었을 때 호출할 함수를 지정합니다.
+                    onClick={( =>
+                             this.setState({ number: number + 1 });
+                             )}
+                 > 
+                	+1 
+                </button>
+            </div>
+        );
+    }
+}
+
+export default Counter;
+```
+
+
+
+- this.setState에 객체 대신 함수 인자 전달하기 
+
+  ```react
+  onClick => {
+      this.setState({ number : number + 1 });
+      this.setState({ number : this.state.number + 1 });
+  }
+  ```
+
+  이와 같이 작성하면 `this.setState`를 두 번 사용하는 것이지만 number는 +1 만 된다.
+  `this.setState`를 사용한다고 해서 state 값이 바로 바뀌지는 않기 때문.
+  이를 해결하기 위해 객체 대신 함수를 넣어준다.
+
+  
+
+  ```react
+  onClick => {
+  	this.setState(PrevState => {
+          return {
+              number: prevState.number + 1
+          };
+      )};
+      // 위와 똑같은 코드, 함수에서 바로 객체를 반환한다는 의미              
+      this.setState(prevState => ({
+         number: prevState.number + 1
+       }));
+                    
+  }
+  ```
+
+  ​    
+
+- 함수 컴포넌트에서 useState 사용하기 
+  : 구 버전에서는 함수 컴포넌트에서 state를 사용할 수 없었다. 
+  함수 컴포넌트에서도 state를 사용하기 위해  useState를 사용한다.
+
+  - 배열 비구조화 할당 
+    : 배열 안에 들어 있는 값을 쉽게 추출할 수 있도록 해주는 문법.
+
+    ```react
+    const array = [1, 2];
+    const one = array[0];
+    const two = array[1];
+    
+    // 비구조화 할당
+    const array = [1, 2];
+    const [one, two] = array;
+    ```
+
+  - useState 사용하기 
+
+    ```react
+    import { useState } from 'react';
+    
+    const Say = () => {
+    	const [message, setMessage] = useState('');
+        const onClickEnter = () => setMessage('안녕하세요!');
+        const onClickLeave = () => setMessage('안녕히 가세요!');
+        
+        return (
+        	<div>
+            	<button onClick={onClickEnter}>입장</button>
+                <button onClick={onClickLeave}>퇴장</button>
+                <h1>{message}</h1>
+            </div>
+        );
+    };
+    
+    export default Say;
+    ```
+
+    useState 함수의 인자에는 상태의 초기값을 넣어 주며, 반드시 객체가 아니어도 된다.
+
+    함수를 호출하면 배열이 되는데 
+    첫번째 원소는 현재 상태 : ` message`
+    두번째 원소는 상태를 바꾸어 주는 함수(Setter 함수) :  `setMessage`
