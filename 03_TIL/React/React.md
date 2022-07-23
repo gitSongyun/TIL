@@ -79,8 +79,8 @@ export default App;
   function App() {
     return (
       <Fragment>
-        <h1>잘 작동하니
-        </h1>
+        <h1> 리액트야 </h1>
+        <h1>잘 작동하니</h1>
       </Fragment>
     );
   }
@@ -121,24 +121,23 @@ export default App;
 
 
 
-- AND 연산자(&&)를 사용한 조건부 렌더링
+- AND 연산자(&&)를 사용한 조건부 렌더링 (특정조건을 만족하는 경우 보여주고 싶다 라고 할 때)
 
   ```js
   function App() {
     const name = '리액트';
-    
     return <div>{name === '리액트' && <h1>리액트입니다</h1>}</div>
   }
   
   export default App;
   ```
-
   
-
+  
+  
 - undefined를 랜더링 하지 않기 
 
   ```js
-  // 오류 발생
+  // 오류 발생, undefined만 return 불가능
   import './App.css';
   
   function App() {
@@ -146,7 +145,7 @@ export default App;
       return name;
   }
   
-  // 옳게된 방식
+  // 옳게된 방식, ||(OR)을 이용하여 어떤 값이 undefined 일 때 사용할 값을 지정할 수 있다.
   function App() {
       const name = undefined;
       return name || '값이 undefiend입니다.';
@@ -160,9 +159,9 @@ export default App;
 
 - 인라인 스타일링
 
-  : 리액트에서 DOM 요소에 스타일을 적용할 때는 문자열 형태로 넣는 것이 아니라 객체 형태로 넣어 주어야 한다. 
+  : 리액트에서 DOM 요소에 **스타일을 적용**할 때는 문자열 형태로 넣는 것이 아니라 객체 형태로 넣어 주어야 한다. 
 
-  `background-color` 이 아니라  카멜케이스 인 `backgroundColor`로 작성해야 한다.
+  `background-color` 가 아니라  카멜케이스 인 `backgroundColor`로 작성해야 한다.
 
   ```js
   function App() {
@@ -198,7 +197,7 @@ export default App;
 
 - class 대신 className
 
-  :JS와는 다르게 `class="myclass"` 가 아니라 `className`으로 작성해야 한다. 
+  : JS와는 다르게 `class="myclass"` 가 아니라 `className`으로 작성해야 한다. 
 
   ```js
   import './App.css';
@@ -381,7 +380,7 @@ export default App;
 ### 3.4  state
 
 :  컴포넌트 내부에서 바뀔 수 있는 값
-   props는 컴포넌트가 사용되는 과정에서 부모 컴포넌트가 설정하는 값이며, 읽기 전용으     	로만 사용할 수 있다.
+   props는 컴포넌트가 사용되는 과정에서 부모 컴포넌트가 설정하는 값이며, 읽기 전용 으로만 사용할 수 있다.
 
 - 클래스형 컴포넌트의  state
 
@@ -497,3 +496,12 @@ export default Counter;
     함수를 호출하면 배열이 되는데 
     첫번째 원소는 현재 상태 : ` message`
     두번째 원소는 상태를 바꾸어 주는 함수(Setter 함수) :  `setMessage`
+
+
+
+## 4. 이벤트 핸들링
+
+- 사용자가 웹 브라우저에서 DOM 요소들과 상호 작용하는 것을 이벤트 라고 한다.
+
+### 4.1 리액트의 이벤트 시스템
+
