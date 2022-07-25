@@ -505,3 +505,378 @@ export default Counter;
 
 ### 4.1 리액트의 이벤트 시스템
 
+event: 사용자가 웹에서 DOM 요소들과 상호 작용 하는 것
+
+##### 4.1.1 주의 사항
+
+1. 카멜 표기법
+2. 이벤트 실행 시 함수 형태의 값 전달
+3. DOM 요소에만 이벤트를 설정 가능
+
+
+
+이벤트 연습
+
+```react
+import React, {Component} from 'react';
+
+class EventPractice extends Component{
+    render(){
+        return (
+            <div>
+                <h1>이벤트 연습</h1>
+                <input type='text' name='message' placeholder='아무거나 입력'
+                    onChange={(e) => {console.log(e)}}/>
+            </div>
+        );
+    }
+}
+
+export default EventPractice;
+```
+
+콘솔에 기록되는 e 객체는 SyntheticEvent로 웹브라우저의 네이티브 이벤트를 감싸는 객체이다.
+
+비동기적으로 이벤트 객체를 참조할 일이 있다면 e.persist() 함수를 호출해야 한다.
+
+
+
+render 안에 임의 메서드 만들기
+
+```react
+import React, {Component} from 'react';
+
+class EventPractice extends Component{
+
+    state = {
+        message:""
+    }
+    render(){
+        return (
+            <div>
+                <h1>이벤트 연습</h1>
+                <input type='text' name='message' placeholder='아무거나 입력'
+                       value={this.state.message}
+                       onChange={(e) =>{this.setState({message: e.target.value})}}/>
+                
+                <button onClick={() => {alert(this.state.message);
+                                        this.setState({message:''}); // message 공백으로 변환
+                                       } 
+                                }>확인</button>
+            </div>
+        );
+    }
+}
+
+export default EventPractice;
+```
+
+
+
+
+
+4.2.3.2 Property Initializer Syntax를 사용한 메서드 작성
+
+```react
+import React, {Component} from 'react';
+
+class EventPractice extends Component{
+
+    state = {
+        message:""
+    }
+
+    handleChange = (e) => {
+        this.setState({
+            message: e.target.value
+        });
+    }      
+    
+    handleClick = () => {
+        alert(this.state.message);
+        this.setState({
+            message: ""
+        });
+    }
+
+    render(){
+        return (
+            <div>
+                <h1>이벤트 연습</h1>
+                <input type='text' name='message' placeholder='아무거나 입력'
+                       value={this.state.message}
+                       onChange={this.handleChange}
+                        />
+                        
+                {/*e.tartgetl.value : 입력 시 변하는 하나하나의 값 
+                   this.state.message : 완전히 변한 값?
+                */}
+                <button onClick={this.handleClick}>확인</button>
+            </div>
+        );
+    }
+}
+
+export default EventPractice;
+```
+
+
+
+##### 4.2.4 input 여러 개 다루기
+
+input이 여러 개일 때는 event 객체를 활용하는 것이다.
+
+```react
+import React, {Component} from 'react';
+
+class EventPractice extends Component{
+	
+    //state 설정
+    state = {
+        username: '',
+        message:''
+    }
+	// input에 일어난 일을 알아야 하므로 event를 매개변수로 보낸다. state를 input에 쓴 name과 value로 set한다.
+    handleChange = (e) => {
+        this.setState({
+           [e.target.name]: e.target.value
+        });
+    }      
+    // 클릭이 일어나면 alert로 state에 저장된 username과 message를 출력 후 빈 문자로 초기화 한다.
+    handleClick = () => {
+        alert(this.state.username + ':' + this.state.message);
+        this.setState({
+            username:"",
+            message: ""
+        });
+    }
+
+
+    render(){
+        return (
+            <div>
+                <h1>이벤트 연습</h1>
+                <input type='text' name='username' placeholder='사용자 명'
+                       value={this.state.username}
+                       onChange={this.handleChange}
+                        />
+
+                <input type="text" name="message" placeholder='아무거나 입력' value={this.state.message} onChange={this.handleChange}></input>
+                <button onClick={this.handleClick}>확인</button>
+            </div>
+        );
+    }
+}
+
+export default EventPractice;
+```
+
+: 객체 안에서 key를 []로 감싸면 그 안에 넣은 래퍼런스가 가리키는 실제 값이 key 값으로 사용된다.
+따라서 `e.target.name`이 key가 된다.
+
+
+
+##### 4.2.5 onKeyPress 이벤트 핸들링
+
+```react
+import React, {Component} from 'react';
+
+class EventPractice extends Component{
+
+    state = {
+        username: '',
+        message:''
+    }
+
+    handleChange = (e) => {
+        this.setState({
+           [e.target.name]: e.target.value
+        });
+    }      
+    
+    handleClick = () => {
+        alert(this.state.username + ':' + this.state.message);
+        this.setState({
+            username:"",
+            message: ""
+        });
+    }
+	// 추가사항, enter라는 event가 일어나면 handleClick을 실행한다.
+    handleKeyPress = (e) => {
+        if(e.key === 'Enter') {
+            this.handleClick();
+        }
+    }
+
+    render(){
+        return (
+            <div>
+                <h1>이벤트 연습</h1>
+                <input type='text' name='username' placeholder='사용자 명'
+                       value={this.state.username}
+                       onChange={this.handleChange}
+                       
+                        />
+
+                <input type="text" name="message" placeholder='아무거나 입력' 
+                       value={this.state.message} onChange={this.handleChange} 
+                       onKeyPress={this.handleKeyPress} ></input>
+                       
+                <button onClick={this.handleClick} >확인</button>
+            </div>
+        );
+    }
+}
+
+export default EventPractice;
+```
+
+
+
+함수 컴포넌트로 구성
+
+```react
+import React, {useState} from 'react';
+
+const EventPractice = () => {
+    const [username, setUsername] = useState('');
+    const [message, setMessage] = useState('');
+    const onChangeUsername = e => setUsername(e.target.value);
+    const onChangeMessage = e => setMessage(e.target.value);
+    
+    const onClick = () => {
+        alert(username + ':' + message);
+        setUsername('');
+        setMessage('');
+
+    };
+    
+    const onKeyPress = e => {
+        if(e.key === 'Enter'){
+            onClick();
+        }
+    };
+
+    return (
+        <div>
+            <h1>이벤트 연습</h1>
+            <input type="text" name="username" placeholder={"사용자명"} value={username} onChange={onChangeUsername}></input>
+            <input type="text" name="usermessage" placeholder={"아무말이나 하셈"} value={message} onChange={onChangeMessage} onKeyPress={onKeyPress}></input>
+            <button onClick={onClick}>확인</button>
+        </div>
+    );
+};
+
+export default EventPractice 
+```
+
+
+
+
+
+```react
+import React, {useState} from 'react';
+
+const EventPractice = () => {
+    const [form, setForm] = useState({
+        username:'',
+        message: ''
+    });
+
+    const {username, message} = form;
+    
+    const onChange = e => {
+        const nextForm = {
+            ...form, // 이전 form 복사
+            [e.target.name] : e.target.value
+        };
+        setForm(nextForm);
+    };
+    
+    const onClick = () => {
+        alert(username + ':' + message);
+        setForm({
+            username:'',
+            message:''
+        });    
+    }
+   
+    const onKeyPress = e => {
+        if(e.key === 'Enter'){
+            onClick();
+        }
+    };
+
+    return (
+        <div>
+            <h1>이벤트 연습</h1>
+            <input type="text" name="username" placeholder="사용자명" value={username} onChange={onChange}></input>
+            <input type="text" name="message" placeholder="아무말이나 적으세여" value={message} onChange={onChange} onKeyPress={onKeyPress}></input>
+            <button onClick={onClick}>확인</button>
+            
+        </div>
+    );
+};
+
+export default EventPractice 
+```
+
+
+
+## 5. ref:DOM에 이름달기
+
+### 5.1 ref를 어떤 상황에서 사용해야 할까?
+
+: DOM을 꼭 직접적으로 건드려야 할 때
+
+
+
+##### 5.1.1 예제 생성
+
+```react
+import {Component} from 'react';
+import './ValidationSample.css'
+
+class ValidationSample extends Component {
+    state = {
+        password:'',
+        clicked: false,
+        validated: false
+    }
+	
+    // input에 변화가 일어나면 변화에 따라 password를 업데이트 한다.
+    handleChange = (e) => {
+        this.setState({
+            password: e.target.value
+        });
+    }
+	
+    // 버튼 클릭이 일어나면, clicked를 true로 바꾸고, ㄱ머증 비밀번호
+    handleButtonClick = () => {
+        this.setState({
+            clicked: true,
+            validated: this.state.password === '0000'
+        })
+    }
+    
+    render(){
+        return(
+            <div>
+                <input type="password" value={this.state.password} onChange={this.handleChange}
+                       className={this.state.clicked ? (this.state.validated ? 'success' : 'failure') : ''} ></input>
+                <button onClick={this.handleButtonClick}>검증하기</button>
+            </div>
+        );
+    }
+}
+
+export default ValidationSample
+```
+
+
+
+### 5.2 ref 사용
+
+##### 5.2.1 콜백 함수를 통한 ref 설정
+
+ref를 만드는 가장 기본적인 방법은 콜백 함수를 사용하는 것
