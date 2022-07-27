@@ -1990,22 +1990,199 @@ ReactDOM.render(
 
 ### 13.4 URL 파라미터와 쿼리스트링
 
-예시
+URL 파라미터는 주로 ID 또는 이름을 사용하여 특정 데이터를 조회할 때 사용,
+
+쿼리스트링은 키워드 검색, 페이지네이션, 정렬 방식 등 데이터 조회에 필요한 옵션을 전달할 때
+
+[예시]
 
 - URL 파라미터 : /profile/velopert (주소에 유동적인 값을 넣음)
 
   URL 파라미터는 `useParams`라는 Hook을 사용하여 객체 형태로 조회할 수 있다.
   URL 파라미터 이름 : 라우트 설정을 할 때 Route 컴포넌트의 path props를 통해 설정.
-
+  URL 파라미터는 /profile/:username과 같이 경로에 :를 사용하여 설정한다.
   
-
 - 쿼리스트링 예시 : /articles?page=1&keyword=react (? 문자열 이후 key=value로 값을 정의하며 &으로 구분)
 
-URL 파라미터는 주로 ID 또는 이름을 사용하여 특정 데이터를 조회할 때 사용,
-
-쿼리스트링은 키워드 검색, 페이지네이션, 정렬 방식 등 데이터 조회에 필요한 옵션을 전달할 때
 
 
+- URL 파라미터로 구현한 컴포넌트
+
+```react
+// App.js
+import { Route, Routes } from 'react-router-dom';
+import About from './pages/About';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
 
 
+const App = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/about" element={<About/>}/>
+      <Route path="/profiles/:username" element={<Profile/>}></Route>
+    </Routes>
+  );
+};
+
+export default App;
+
+// Home.js
+import { Link } from 'react-router-dom';
+
+const Home = () => {
+    return (
+        <div>
+            <h1>홈</h1>
+            <p>가장 먼저 보여지는 페이지.</p>
+            <ul>
+                <li>
+                    <Link to="/about">소개</Link>       
+                </li>
+                <li>
+                    <Link to="/profiles/velopert">velopert의 프로필</Link>
+                </li>
+                <li>
+                    <Link to="/profiles/gildong">gildong의 프로필</Link>
+                </li>
+                <li>
+                    <Link to="/profiles/void">존재하지 않는 프로필</Link>
+                </li>
+            </ul>
+        </div>
+    );
+};
+
+export default Home;
+
+//about.js
+const About = () => {
+    return (
+        <div>
+            <h1>소개</h1>
+            <p>리액트 라우터를 사용해 보는 프로젝트 입니다.</p>
+        </div>
+    );
+};
+
+export default About;
+
+//profile.js
+import { useParams } from 'react-router-dom';
+
+const data = {
+    velopert: {
+        name: '김민준',
+        description: '리액트를 좋아하는 개발자',
+
+    },
+    gildong : {
+        name: '홍길동',
+        description: '고전 소설 홍길동 전의 주인공',
+    },
+};
+
+const Profile = () => {
+    const params = useParams();
+    const profile = data[params.username];
+
+    return (
+        <div>
+            <h1>사용자 프로필</h1>
+            {profile ? (
+                <div>
+                    <h2>{profile.name}</h2>
+                    <p>{profile.description}</p>
+                </div>
+            ) : (
+                <p>존재하지 않는 프로필</p>
+            )}
+        </div>
+    );
+};
+
+export default Profile;
+```
+
+
+
+
+
+#### 13.4.2 쿼리스트링
+
+: URL 파라미터와 달리 Route 컴포넌트를 사용할 때 별도로 설정해야 하는 것이 없다. 
+
+```react
+// About.js
+
+// useLocation 이라는 Hook사용
+import { useLocation  } from "react-router-dom";
+
+const About = () => {
+    const location = useLocation();
+
+    return (
+        <div>
+            <h1>소개</h1>
+            <p>리액트 라우터를 사용해 보는 프로젝트</p>
+            <p>쿼리스트링: {location.search}</p>
+        </div>
+    )
+}
+
+export default About;
+```
+
+=> useLocation 훅은  `location`객체를 반환하는데, 이 객체는 현재 사용자가 보고 있는 페이지의 정보를 지님
+
+이 객체는 다음과 같은 값들이 있다.
+
+- pathname : 현재 주소의 경로 (쿼리스트링 제외)
+- search : 맨 앞의 ? 문자를 포함한 쿼리스트링 값
+- hash: 주소의 # 문자열 뒤의 값 (주로 HIstory api가 지원되지 않는 구형 브라우저에서 클라이언트 라우팅을 사용할 때 쓰는 해시 라우터에서 사용 가능)
+- state: 페이지로 이동할 때 임의로 넣을 수 있는 상태 값
+- key : location 객체의 고유값, 초기에는 default 이며 페이지가 변경될 때 마다 고유의 값이 생성됨.
+
+`useLocation`을 사용하면 따로 파싱을 해야 하는데 useSearchParams를 사용 하면 쉽게 파싱 가능
+
+```react
+// About.js
+import { useSearchParams  } from "react-router-dom";
+
+const About = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const detail = searchParams.get('detail');
+    const mode = searchParams.get('mode');
+    
+    const onToggleDetail  = () => {
+        setSearchParams({ mode, detail: detail === 'true' ? false:true});
+    };
+
+    const onIncreaseMode =() => {
+        const nextMode = mode === null ? 1 : parseInt(mode) + 1;
+        setSearchParams({mode: nextMode, detail});
+    };
+
+    return (
+        <div>
+            <h1>소개</h1>
+            <p>리액트 라우터를 사용해 보는 프로젝트</p>
+            <p>detail: {detail}</p>
+            <p>mode: {mode}</p>
+            <button onClick={onToggleDetail}>Toggle detail</button>
+            <button onClick={onIncreaseMode}>mode + 1</button>
+        </div>
+    );
+};
+
+export default About;
+```
+
+`useSearchParams` 는 배열 타입의 값을 반환하며, 첫 번째 원소는 쿼리파라미터를 조회하거나 수정하는 메서드들이 담긴 객체를 반환한다.
+두 번째 원소는 쿼리파라미터를 객체 형태로 업데이트 할 수 있는 함수를 반환.
+
+
+
+### 13.5 중첩된 라우트
 
