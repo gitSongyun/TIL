@@ -280,7 +280,7 @@ export default App;
   import MyComponent from './MyComponent'
   
   const App = () => {
-    return <MyComponent/>;
+    return <MyComponent name="react"/>;
   };
   
   export default App;
@@ -1529,7 +1529,7 @@ export default Counter;
 ### 8.4 useMemo
 
 : 함수 컴포넌트 내부에서 발생하는 연산을 최적화할 수 있다.
-  
+
 
 ### 8.5 useCallback
 
@@ -1559,6 +1559,453 @@ export default Counter;
 
 
 ### 9.2 Sass 사용하기
+
+- utils 함수 분리 하기 
+  : 여러 파일에서 사용될 수 있는 Sass 변수 및 믹스인(재사용되는 블록을 함수처럼 사용 가능)은 다른 파일로 따로 분리 한뒤
+    필요한 곳에서 쉽게 불러와 사용 가능
+
+
+
+
+
+### 9.3 CSS Module
+
+: CSS를 불러와서 사용할 때 클래스 이름을 고유한 값,`[파일 이름]_[클래스 이름]_[해시값]` 형태로 만들어서 컴포넌트 스타일 클래스 이름이 중첩되는 현상을 방지한다.
+
+ex) `{wrapper: "CSSModule_wrapper_1sbdQ"}`
+이 고유한 클래스 이름을 사용하려면 클래스를 적용하고 싶은 jsx 엘리먼트에 `className={styles.[클래스이름]}` 형태로 전달해 주면 된다. 
+
+
+
+#### 9.3,1 classnames
+
+```react
+classNames('one', {two: true}); // one, two
+
+const myClass = 'hello';
+classNames('one', myClass, {myCondition: true}); // one hello myCondition
+```
+
+
+
+### 9.4 styled-components
+
+
+
+
+
+#### 9.4.1 Tagged 템플릿 리터럴
+
+: `(백틱)을 사용하여 만든 문자열에 스타일 정보를 넣어주는 문법
+
+```react
+`hello ${{foo: 'bar'}} ${() => 'world'}!`
+// hello [object Object] () => 'world!'
+```
+
+템플릿에 객체를 넣거나 함수를 넣으면 형태를 잃어 버리게 된다.
+
+Tagged 템플릿 리터럴을 사용하면 템플릿 사이사이에 들어가는 자바스크립트 객체나 함수의 원본 값을 그대로 추출할 수 있다. 
+
+
+
+#### 9.4.2 스타일링된 엘리먼트 만들기
+
+```react
+import styled from 'styled-components';
+
+const MyComponent = styled.div`
+	font-size: 2rem;
+`;
+```
+
+styled를 불러오고 styled.태그명 을 사용하면 구현 할 수 있다. 
+
+(ex. styled.button, styled.input)
+
+사용해야 할 태그명이 유동적이거나 특정 컴포넌트 자체에 스타일링해 주고 싶다면
+
+```react
+const MyInput = styled('input')` // styled 함수에 인자로 넣어준다.
+	background: gray;
+`
+
+
+// 컴포넌트를 styled에 넣은 경우, 해당 컴포넌트에 className props를 최상위 DOM의 className 값으로 설정하는 작업이 내부적으로 되어 있어야 한다.
+const Link = ({ className }) => {
+    return <div className={className}>Link</div>
+}
+
+const StyledLink = styled(Link)` // 아예 컴포넌트 형식의 값을 넣어준다.
+	color: blue;
+`
+```
+
+ 
+
+#### 9.4.3 스타일에서 props 조회하기
+
+```react
+const Box = styled.div`
+    /* props로 넣어 준 값을 직접 전달해 줄 수 있음 */
+    background: ${props => props.color || 'blue'};
+    padding: 1rem;
+    display: flex;
+`;
+
+// <Box color="black"></Box> 이런식으로 props 전달 가능
+```
+
+#### 
+
+#### 9.4.4 props에 따른 조건부 스타일링 
+
+일반 CSS클래스를 사용하여 조건부 스타일링을 해야 할 때는 className을 사용하여 조건부 스타일링을 했는데, styled-components에서는 props로 처리 가능
+
+```react
+// props에 여러줄의 css를 넣기 위해선 css`` 로 묶어야 한다.  
+${props => 
+        props.inverted && css`
+            background: none;
+            border: 2px solid white;
+            color: white;
+            &:hover {
+                background: white;
+                color: black;
+            }
+        `};
+        & + button {
+            margin-left: 1rem;
+        }
+`;
+```
+
+
+
+#### 9.4.5 반응형 디자인
+
+```react
+// StyledComponents.js 
+
+const Box = styled.div`
+    /* props로 넣어 준 값을 직접 전달해 줄 수 있음 */
+    background: ${props => props.color || 'blue'};
+    padding: 1rem;
+    display: flex;
+
+    width: 1024px;
+    margin: 0 auto;
+    @media (max-width : 1024px) {
+        width: 768px;
+    }
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+```
+
+
+
+
+
+## 10. 일정관리 웹 어플리케이션 만들기
+
+todo 배열에 새 객체를 추가하면 id 값에 1씩 더해 주어야 하는데.
+ useState가 아니라 useRef를 쓰는 이유는 id값은 렌더링 되는 정보가 아니기 때문.
+
+props로 전달해야 할 함수를 만들 때는 useCallback을 사용하여 함수를 감싸는 것을 습관화 한다.
+
+```react
+// app.js
+import { useState, useRef, useCallback } from 'react';
+import TodoTemplate from "./components/TodoTemplate";
+import TodoInsert from "./components/TodoInsert";
+import TodoList from './components/TodoList';
+
+const App = () => {
+  const [todos, setTodos] = useState ([
+    {
+      id: 1,
+      text: '리액트 기초 알아보기',
+      checked: true,
+    },
+    {
+      id: 2,
+      text: '컴포넌트',
+      checked: true,
+    },
+    {
+      id: 3,
+      text: '스타일링',
+      checked: false,
+    },
+  ]);
+
+  const onRemove = useCallback(
+    id => {
+      setTodos(todos.filter(todo => todo.id !== id));
+    },
+    [todos],
+  )
+
+  const nextId = useRef(4);
+
+  const onInsert = useCallback(
+    text => {
+      const todo = {
+        id: nextId.current,
+        text,
+        checked: false,
+      };
+    
+    setTodos(todos.concat(todo));
+    nextId.current += 1 
+    },
+    [todos],
+  );
+  
+  const onToggle = useCallback(
+    id => {
+      setTodos(
+        todos.map(todo => 
+          todo.id === id ? {...todo, checked : !todo.checked} : todo,
+        ),
+      );
+    },
+    [todos],
+  );
+
+  return( 
+    <TodoTemplate>
+      <TodoInsert onInsert={onInsert}/>
+      <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle}/>
+    </TodoTemplate>
+  );
+};
+
+export default App;
+
+
+// todo template
+import './TodoTemplate.scss';
+
+const Todotemplate = ({ children }) => {
+    return (
+        <div className="TodoTemplate">
+            <div className="app-title">일정 관리</div>
+            <div className="content">{children}</div>
+
+        </div>
+    );
+};
+
+export default Todotemplate;
+
+
+
+//todo insert
+import { useState, useCallback } from 'react';
+import { MdAdd } from 'react-icons/md';
+import './TodoInsert.scss'
+
+const TodoInsert = ({onInsert}) => {
+    const [value, setvalue] = useState('');
+
+    const onChange = useCallback(e => {
+        setvalue(e.target.value);
+    }, []);
+
+    const onSubmit = useCallback(
+        e=> {
+            onInsert(value);
+            setvalue('');
+            // submit 이벤트는 브라우저에서 새로고침을 발생
+            // 이를 막기 위해 이 함수 호출
+            e.preventDefault();
+        },
+        [onInsert, value],
+    )
+    return (
+        <form className="TodoInsert" onSubmit={onSubmit}>
+            <input 
+                placeholder="할 일을 입력하세요"
+                value={value}
+                onChange={onChange}
+            />
+            <button type="submit">
+                <MdAdd/>
+            </button>
+        </form>
+    );
+};
+
+export default TodoInsert;
+
+
+//todo list
+import TodoListItem from "./TodoListItem";
+import './TodoList.scss';
+
+const TodoList = ({ todos, onRemove,  onToggle }) => {
+    return (
+        <div className="TodoList">
+            {todos.map(todo => (
+                <TodoListItem 
+                todo={todo} 
+                key={todo.id} 
+                onRemove={onRemove}
+                onToggle={onToggle}/>
+            ))}
+        </div>
+    );
+};
+
+export default TodoList;
+
+//todo listitem
+import {
+    MdCheckBoxOutlineBlank,
+    MdCheckBox,
+    MdRemoveCircleOutline,
+} from 'react-icons/md';
+import cn from 'classnames';
+import './TodoListItem.scss'
+
+const TodoListItem = ( { todo, onRemove, onToggle }) => {
+    const {id, text, checked } = todo;
+    return (
+        <div className='TodoListItem'>
+            <div className={cn('checkbox', { checked })} onClick={() => onToggle(id)}>
+                {checked ? <MdCheckBox/> : <MdCheckBoxOutlineBlank/>}
+                <div className="text">{text}</div>
+            </div>
+            <div className="remove" onClick={() => onRemove(id)}>
+                <MdRemoveCircleOutline/>
+            </div>
+        </div>
+    );
+};
+
+export default TodoListItem;
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+## 12. immer를 설치하고 사용법 알아보기
+
+리액트에서는 배열, 객체를 업데이트 할 때 직접 수정하면 안되고
+불변성을 지켜주면서 업데이트 해야 한다.
+
+immer를 사용하면 불변성을 유지하는 작업을 매우 간단하게 처리할 수 있다. 
+
+```react
+import produce from 'immer';
+const nextState = porduce(originalState, draft => {
+    draft.somewhere.deep.inside = 5;
+})
+```
+
+ produce라는 함수는 `수정하고 싶은 상태`, `상태를 어떻게 업데이트 할지` 두 개의 파라미털르 받아 정의하는 함수 이다. 
+
+두 번째 파라미터로 전달되는 함수 내부에서 원하는 값을 변경하면, produce 함수가 불변성 유지를 대신해 주면서 새로운 상태를 생성해 준다. 
+
+ 
+
+
+
+## 13. 리액트 라우터로 SPA 개발하기
+
+- 라우팅 이란?
+
+  사용자가 요청한 URL에 따라 알맞은 페이지를 보여주는 것
+  다른 페이지로 이동할 때 서버에 다른 페이지의 html을 새로 요청 :x:
+  브라우저의 Histroy API를 사용하여 브라우저의 주소창 값만 변경하고 기존에 페이지에 띄웠던 웹 애플리케이션을 그대로 유지하면서 
+  라우팅 설정에 따라 또 다른 페이지를 보여주게 된다.
+
+- 라우트 시스템을 구축하기 위한 두가지 선택지
+
+  - 리액트 라우터 
+  - Next.js
+
+
+
+### 13.3 리액트 라우터 적용 및 기본 사용법
+
+- 리액트 라우터 시작
+
+  ```bash
+  $ yarn add react-router-dom
+  ```
+
+
+
+- 사용자의 브라우저 주소 경로에 따라 우리가 원하는 컴포넌트를 보여주려면 `Route`라는 컴포넌트를 통해 라우트 설정을 해줘야 한다.
+
+  ```
+  <Route path="주소규칙" element={보여 줄 컴포넌트 JSX} />
+  ```
+
+
+
+#### 13.3.2 프로젝트에 라우터 적용
+
+```react
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import { BrowserRouter } from 'react-router-dom';
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App/>
+  </BrowserRouter>,
+  document.getElementById('root')
+);
+
+```
+
+
+
+#### 13.3.5 Link 컴포넌트를 사용하여 다른 페이지로 이동하는 링크 보여주기 
+
+: a태그 대신 Link 사용
+
+```react
+<Link to="경로">링크 이름</Link>
+```
+
+
+
+### 13.4 URL 파라미터와 쿼리스트링
+
+예시
+
+- URL 파라미터 : /profile/velopert (주소에 유동적인 값을 넣음)
+
+  URL 파라미터는 `useParams`라는 Hook을 사용하여 객체 형태로 조회할 수 있다.
+  URL 파라미터 이름 : 라우트 설정을 할 때 Route 컴포넌트의 path props를 통해 설정.
+
+  
+
+- 쿼리스트링 예시 : /articles?page=1&keyword=react (? 문자열 이후 key=value로 값을 정의하며 &으로 구분)
+
+URL 파라미터는 주로 ID 또는 이름을 사용하여 특정 데이터를 조회할 때 사용,
+
+쿼리스트링은 키워드 검색, 페이지네이션, 정렬 방식 등 데이터 조회에 필요한 옵션을 전달할 때
+
+
 
 
 
