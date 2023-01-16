@@ -18,7 +18,6 @@ for i in range(total_sub):
 # print(total_mil)
 total_mil.sort()
 
-# 하나씩 더하면서 point 보다 작을 때 까지 더한다
 sum = 0
 cnt = 0
 for i in total_mil:
