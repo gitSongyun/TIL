@@ -23,7 +23,6 @@ def DFS(height, start):
     return
 
 
-
 N = int(input())
 
 location = []
