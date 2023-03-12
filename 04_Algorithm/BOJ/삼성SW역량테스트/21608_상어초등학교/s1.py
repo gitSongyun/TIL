@@ -22,8 +22,7 @@ def search(student, likeList):
     # 상, 우, 하, 좌 순으로 탐색
     dr = [-1, 0, 1, 0]
     dc = [0, 1, 0, -1]
-    
-    best = -1
+    arr = []
 
     for r in range(N):
         for c in range(N):
@@ -38,13 +37,13 @@ def search(student, likeList):
                             emp += 1
                         elif graph[nr][nc] in likeList:
                             like += 2      
-                summ = emp+like
-                if best < summ:
-                    best = summ
-                    x = r
-                    y = c
-    
-    graph[x][y] = student
+
+                arr.append((like, emp, r, c))
+    result = sorted(arr, key=lambda x:(-x[0], -x[1], x[2], x[3]))
+    for r in result:
+        if graph[r[2]][r[3]] == 0:
+            graph[r[2]][r[3]] = student
+            break
     
     pass
 
@@ -56,6 +55,6 @@ for i in range(N**2):
     arr = list(map(int, input().split()))
     dict[arr[0]] = arr[1:]    
     search(arr[0], arr[1:])
-
 answer = satisfy(dict)
 print(answer)
+
