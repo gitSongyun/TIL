@@ -1,3 +1,6 @@
+import sys
+sys.stdin = open('input.txt')
+
 n = int(input())
 lst = [list(map(int, input().split())) for _ in range(n)]
 x, y = n // 2, n // 2

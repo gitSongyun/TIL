@@ -25,7 +25,6 @@ def watch(x, y, graph_copy, direction):
     for i in direction:
         nx, ny = x, y   
         while True:
-
             nx += dir[i][0]
             ny += dir[i][1]
             # 범위 안에 든다면 탐색
