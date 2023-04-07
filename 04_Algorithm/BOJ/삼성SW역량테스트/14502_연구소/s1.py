@@ -62,9 +62,8 @@ wall_count = 0
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 answer = 0
-# 브루트포스로 벽을 다 세워 본다.
-make_wall(wall_count)
-print(answer)
-# bfs로 바이러스를 보낸다. 
 
-# 0을 센다. 끝
+make_wall(wall_count)
+
+print(answer)
+
