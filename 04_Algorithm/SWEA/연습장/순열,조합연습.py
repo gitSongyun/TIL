@@ -32,7 +32,7 @@ def pick(n, picked, topick):
 
 
 lst = []
-number = [1, 3, 9]
+number = [1, 1, 9]
 pick(3, [], 2)
 print(lst)
 
