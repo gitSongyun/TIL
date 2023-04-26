@@ -12,7 +12,6 @@ for i in range(N):
     if i >= X-1:
         if maxx_sum == win_sum:
             maxx_cnt += 1
-            
 
         if maxx_sum < win_sum:
             maxx_sum = win_sum
