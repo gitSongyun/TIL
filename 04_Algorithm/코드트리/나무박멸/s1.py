@@ -1,205 +1,170 @@
 import sys
 sys.stdin = open('input.txt')
+# 변수 선언 및 입력:
+n, m, k, c = tuple(map(int, input().split()))
+tree = [[0] * (n + 1)]
+for _ in range(n):
+    tree.append([0] + list(map(int, input().split())))
 
-from collections import deque
+add_tree = [
+    [0] * (n + 1)
+    for _ in range(n + 1)
+]
+herb = [
+    [0] * (n + 1)
+    for _ in range(n + 1)
+]
 
-def simulate():
-    global answer
-    # 빈공간이 몇개 인지
-    tmp_map = [[0] * n for _ in range(n)]
-
-    print('시작')
-    print('remove_map 현황')
-    for r in remove_map:
-        print(r)
-    print('---------')
-
-    # step1. 나무 성장
-    for i in range(n):
-        for j in range(n):
-            # 그곳이 나무라면 성장 시키기 발동
-            if graph[i][j] > 0:
-                empty = grow(i,j, 0)
-                if remove_map[i][j] == 0:
-                    tmp_map[i][j] = empty
-    # print('성장끝')
-    # print('tmp_map 현황')
-    # for r in tmp_map:
-    #     print(r)
-    # print('---------')
-    # #
-    # #
-    # print('성장끝')
-    # print('그래프 현황')
-    # for r in graph:
-    #     print(r)
-    # print('---------')
-    #
-    # print('tmp_map현황')
-    # for t in tmp_map:
-    #     print(t)
-    # print('---------')
-    #
-    # print('remove 현황')
-    # for t in remove_map:
-    #     print(t)
-    # print('---------')
-    # step2. 번식
-    for i in range(n):
-        for j in range(n):
-            # 제초제 구역이라면, 그 칸 패스
-            # if remove_map[i][j] > 1:
-            #     continue
-            # 나무라면 그 주변 탐색
-            if graph[i][j] > 0:
-                bunsik(i, j, tmp_map)
-
-    print('번식맵')
-    for r in tmp_map:
-        print(r)
-    print('---------')
-    # 번식 완료
-    for i in range(n):
-        for j in range(n):
-            graph[i][j] = graph[i][j] + tmp_map[i][j]
-
-    print('번식끝',graph)
-    print('그래프 현황')
-    for r in graph:
-        print(r)
-    print('---------')
-    tmp_map = [[0] * n for _ in range(n)]
-
-    # step3. 제초제 탐색
-    tot = 0
-    t_x = t_y = -1
-    for i in range(n):
-        for j in range(n):
-            if graph[i][j] > 0:
-                tmp_tot = find_pos(i,j)
-                if tot < tmp_tot:
-                    tot = tmp_tot
-                    t_x , t_y = i, j
-
-    answer += tot
-    # tmp_map 초기화
+ans = 0
 
 
-    for i in range(n):
-        for j in range(n):
-            if remove_map[i][j] > 0:
-                remove_map[i][j] -=1
-    # 제초제 뿌리기
-    remove(t_x, t_y)
-
-    print('제초제 맵')
-    for r in remove_map:
-        print(r)
-    print('---------')
+def is_out_range(x, y):
+    return not (1 <= x and x <= n and 1 <= y and y <= n)
 
 
-# 성장
-def grow(x, y, empty):
+# 1단계 : 인접한 네 개의 칸 중 나무가 있는 칸의 수만큼 나무가 성장합니다.
+def step_one():
+    dxs, dys = [-1, 0, 1, 0], [0, -1, 0, 1]
 
-    cnt = 0
-    # 사방 탐색으로 나무 갯수 센다.
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-
-        if 0<=nx<n and 0<=ny<n:
-            if graph[nx][ny] > 0 :
-                cnt += 1
-
-            if graph[nx][ny] == 0 and remove_map[nx][ny] == 0:
-                # print(nx, ny)
-                empty += 1
-
-
-    graph[x][y] += cnt
-
-    return empty
-
-
-# 번식
-def bunsik(x, y, tmp_map):
-    cnt = tmp_map[x][y]
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        if 0 <= nx < n and 0 <= ny < n:
-            if remove_map[x][y] > 0:
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            if tree[i][j] <= 0:
                 continue
 
-            elif graph[nx][ny] == 0 :
-                tmp_map[nx][ny] += graph[x][y] // cnt
-
-    tmp_map[x][y] = 0
-
-
-
-# 제초제 탐색
-def find_pos(x, y):
-    # 좌 상단 부터
-    total = graph[x][y]
-
-    for i in range(4):
-        nx, ny = x, y
-        for j in range(k):
-            nx += dir[i][0]
-            ny += dir[i][1]
-            if 0<=nx<n and 0<=ny<n:
-                # 그 칸이 나무라면
-                if graph[nx][ny] > 0:
-                    total += graph[nx][ny]
-                # 나무가 아니라면 해당 방향 탐색 멈춤
-                else:
+            # 나무가 있는 칸의 수(cnt)만큼 나무가 성장합니다.
+            cnt = 0
+            for dx, dy in zip(dxs, dys):
+                nx, ny = i + dx, j + dy
+                if is_out_range(nx, ny):
                     continue
-            # 범위를 벗어나면 해당방향 탐색 멈춤
-            else:
-                break
+                if tree[nx][ny] > 0:
+                    cnt += 1
 
-    return total
+            tree[i][j] += cnt
 
-# 제초제 뿌리기
-def remove(x, y):
-    graph[x][y] = 0
-    remove_map[x][y] = c
-    for i in range(4):
-        nx, ny = x, y
-        for j in range(k):
-            nx += dir[i][0]
-            ny += dir[i][1]
-            if 0<=nx<n and 0<=ny<n:
-                # 그 칸이 벽이 아니라면,
-                print('그래프 현황***********************')
-                for r in graph:
-                    print(r)
-                print('---------')
-                if graph[nx][ny] != -1:
-                    graph[nx][ny] = 0
-                    remove_map[nx][ny] = c
-                else:
+
+# 2단계 : 기존에 있었던 나무들은 아무것도 없는 칸에 번식을 진행합니다.
+def step_two():
+    dxs, dys = [-1, 0, 1, 0], [0, -1, 0, 1]
+
+    # 모든 나무에서 동시에 일어나는 것을 구현하기 위해 하나의 배열을 더 이용합니다.
+    # add_tree를 초기화해줍니다.
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            add_tree[i][j] = 0
+
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            if tree[i][j] <= 0:
+                continue
+
+            # 해당 나무와 인접한 나무 중 아무도 없는 칸의 개수를 찾습니다.
+            cnt = 0
+            for dx, dy in zip(dxs, dys):
+                nx, ny = i + dx, j + dy
+                if is_out_range(nx, ny):
+                    continue
+                if herb[nx][ny]:
+                    continue
+                if tree[nx][ny] == 0:
+                    cnt += 1
+
+            # 인접한 나무 중 아무도 없는 칸은 cnt로 나눠준 만큼 번식합니다.
+            for dx, dy in zip(dxs, dys):
+                nx, ny = i + dx, j + dy
+                if is_out_range(nx, ny):
+                    continue
+                if herb[nx][ny]:
+                    continue
+                if tree[nx][ny] == 0:
+                    add_tree[nx][ny] += tree[i][j] // cnt
+
+    # add_tree를 더해 번식을 동시에 진행시킵니다.
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            tree[i][j] += add_tree[i][j]
+
+
+# 3단계 : 가장 많이 박멸되는 칸에 제초제를 뿌립니다.
+def step_three():
+    global ans
+
+    dxs, dys = [-1, 1, 1, -1], [-1, -1, 1, 1]
+
+    max_del, max_x, max_y = 0, 1, 1
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            # 모든 칸에 대해 제초제를 뿌려봅니다. 각 칸에서 제초제를 뿌릴 시 박멸되는 나무의 그루 수를 계산하고,
+            # 이 값이 최대가 되는 지점을 찾아줍니다.
+            if tree[i][j] <= 0:
+                continue
+
+            cnt = tree[i][j]
+            for dx, dy in zip(dxs, dys):
+                nx, ny = i, j
+                for _ in range(k):
+                    nx, ny = nx + dx, ny + dy
+                    if is_out_range(nx, ny):
+                        break
+                    if tree[nx][ny] <= 0:
+                        break
+                    cnt += tree[nx][ny]
+
+            if max_del < cnt:
+                max_del = cnt
+                max_x = i
+                max_y = j
+
+    ans += max_del
+
+    # 찾은 칸에 제초제를 뿌립니다.
+    if tree[max_x][max_y] > 0:
+        tree[max_x][max_y] = 0
+        herb[max_x][max_y] = c
+
+        for dx, dy in zip(dxs, dys):
+            nx, ny = max_x, max_y
+            for _ in range(k):
+                nx, ny = nx + dx, ny + dy
+                if is_out_range(nx, ny):
                     break
-            # 범위를 벗어나면 해당방향 제초제 멈춤
-            else:
-                break
-    pass
+                if tree[nx][ny] < 0:
+                    break
+                if tree[nx][ny] == 0:
+                    herb[nx][ny] = c
+                    break
 
-# 크기, 박멸 진행수, 확산범위, 제초제 수명
-n, m, k, c = map(int, input().split())
-graph = [list(map(int, input().split())) for _ in range(n)]
-# 제초제 현황 맵
-remove_map = [[0] * n for _ in range(n)]
-answer = 0
-# 대각
-dir = [(-1, -1), (-1, 1), (1, 1), (1, -1)]
-# 사방
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
-
-for i in range(m):
-    simulate()
+                tree[nx][ny] = 0
+                herb[nx][ny] = c
 
 
-print(answer)
+# 제초제의 기간을 1년 감소시킵니다.
+def delete_herb():
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            if herb[i][j] > 0:
+                herb[i][j] -= 1
+
+
+for _ in range(m):
+    # 1단계 : 인접한 네 개의 칸 중 나무가 있는 칸의 수만큼 나무가 성장합니다.
+    step_one()
+    print('---성장 후 나무현황----')
+    for m in tree:
+        print(m)
+    # 2단계 : 기존에 있었던 나무들은 아무것도 없는 칸에 번식을 진행합니다.
+    step_two()
+    print('---번 후 나무현황----')
+    for m in tree:
+        print(m)
+    # 제초제의 기간을 1년 감소시킵니다.
+    delete_herb()
+
+    # 3단계 : 가장 많이 박멸되는 칸에 제초제를 뿌립니다.
+    step_three()
+    print('---제초제 작업 후 나무현황----')
+    for m in tree:
+        print(m)
+    print('이만큼 제거')
+    print(ans)
+print(ans)
