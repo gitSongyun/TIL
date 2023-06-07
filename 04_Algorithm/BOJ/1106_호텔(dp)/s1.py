@@ -17,4 +17,5 @@ for cost, num_people in cost_list:
 # print(dp)
 # C명 이후로 최소값을 확인해야 한다.
 #
+print(dp)
 print(min(dp[C:]))
