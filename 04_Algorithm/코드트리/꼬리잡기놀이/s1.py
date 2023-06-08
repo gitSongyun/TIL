@@ -102,7 +102,7 @@ def ball():
     if r <= N:
         hold = r-1
         for j in range(N):
-            if 1<=maps[r-1][j]<=3:
+            if 1<=maps[hold][j]<=3:
                 team_no = tag_arr[hold][j][0] - 1
                 team_haad = team_dir[team_no][3]
                 ans += (tag_arr[hold][j][1] - team_haad) ** 2
@@ -116,10 +116,9 @@ def ball():
         hold = r % (N+1)
         for i in range(N-1, -1, -1):
             if 1<=maps[i][hold] <= 3:
-                ans += (maps[i][hold]) ** 2
-                team_no = tag_arr[i][hold] - 1
+                team_no = tag_arr[i][hold][0] - 1
                 team_haad = team_dir[team_no][3]
-                ans += (tag_arr[hold][j][1] - team_haad) ** 2
+                ans += (tag_arr[i][hold][1] - team_haad) ** 2
                 change_head(team_haad, team_no)
                 return
         return
@@ -128,10 +127,9 @@ def ball():
         hold = (3*N) - r
         for i in range(N-1,-1, -1 ):
             if 1<=maps[i][hold]<=3:
-                ans += (maps[i][hold]) ** 2
-                team_no = tag_arr[i][hold] - 1
+                team_no = tag_arr[i][hold][0] - 1
                 team_haad = team_dir[team_no][3]
-                ans += (tag_arr[hold][j][1] - team_haad) ** 2
+                ans += (tag_arr[i][hold][1] - team_haad) ** 2
                 change_head(team_haad, team_no)
                 return
         return
@@ -140,10 +138,9 @@ def ball():
         hold = (4*N) - r
         for i in range(N):
             if 1<=maps[i][hold]<=3:
-                ans += (maps[i][hold]) ** 2
-                team_no = tag_arr[i][hold] - 1
+                team_no = tag_arr[i][hold][0] - 1
                 team_haad = team_dir[team_no][3]
-                ans += (tag_arr[hold][j][1] - team_haad) ** 2
+                ans += (tag_arr[i][hold][1] - team_haad) ** 2
                 change_head(team_haad, team_no)
                 return
         return
